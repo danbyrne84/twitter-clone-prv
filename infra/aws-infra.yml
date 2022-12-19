@@ -1,98 +1,61 @@
 Resources:
-  # Create an Auto Scaling group for the web server instances
-  WebServerAutoScalingGroup:
-    Type: AWS::AutoScaling::AutoScalingGroup
+  # Create a NoSQL database for storing the tweets and user information
+  TweetDatabase:
+    Type: AWS::DynamoDB::Table
     Properties:
-      # Use an Amazon Machine Image (AMI) with a pre-installed web server
-      # such as Apache or Nginx
-      LaunchConfigurationName: WebServerLaunchConfiguration
-      MinSize: 2
-      MaxSize: 10
-      # Use a load balancer to distribute traffic to the web servers
-      LoadBalancerNames:
-        - WebServerLoadBalancer
-      # Use a scalable target to automatically adjust the number of web servers
-      # based on the incoming traffic
-      TargetGroupARNs:
-        - !Ref WebServerTargetGroup
-      # Use an Amazon EC2 instance type with enough capacity to handle the expected traffic
-      InstanceType: t3.medium
-      # Use an Amazon EBS volume to store the application code and data
-      # You can specify the size of the volume and the type (such as gp2 for General Purpose SSD)
-      BlockDeviceMappings:
-        - DeviceName: /dev/xvda
-          Ebs:
-            VolumeSize: 8
-            VolumeType: gp2
-      # Use a user data script to install the necessary software and configure the web server
-      # You can specify the script as a file in an Amazon S3 bucket or inline in the configuration file
-      UserData:
-        Fn::Base64: !Sub |
-          #!/bin/bash
-          set -ex
-          # Install Apache or Nginx
-          # Configure the web server
-          # Copy the application code and data to the EBS volume
-          # Start the web server
-  # Create a launch configuration for the web server instances
-  WebServerLaunchConfiguration:
-    Type: AWS::AutoScaling::LaunchConfiguration
+      # Use a primary key that is a composite of the tweet ID and user ID
+      # This allows you to store all the tweets for a given user in a single partition
+      # and allows you to retrieve a tweet by its ID and user ID
+      AttributeDefinitions:
+        - AttributeName: tweet_id
+          AttributeType: S
+        - AttributeName: user_id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: tweet_id
+          KeyType: HASH
+        - AttributeName: user_id
+          KeyType: RANGE
+      # Use a global secondary index to allow you to retrieve tweets by user ID
+      # and to allow you to retrieve the most recent tweets for a given user
+      GlobalSecondaryIndexes:
+        - IndexName: user_index
+          KeySchema:
+            - AttributeName: user_id
+              KeyType: HASH
+            - AttributeName: tweet_id
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 5
+            WriteCapacityUnits: 5
+      # Use a provisioned capacity to handle the expected read and write requests
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+  # Create a security group for the NoSQL database
+  TweetDatabaseSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
     Properties:
-      # Use the same AMI as in the Auto Scaling group
-      ImageId: ami-12345678
-      # Use the same instance type as in the Auto Scaling group
-      InstanceType: t3.medium
-      # Use the same EBS volume and user data script as in the Auto Scaling group
-      BlockDeviceMappings:
-        - DeviceName: /dev/xvda
-          Ebs:
-            VolumeSize: 8
-            VolumeType: gp2
-      UserData: !Base64 WebServerAutoScalingGroup.UserData
-  # Create a load balancer for the web server instances
-  WebServerLoadBalancer:
-    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
-    Properties:
-      # Use a public facing load balancer to allow users to access the application
-      Scheme: internet-facing
-      # Use the Application Load Balancer (ALB) type
-      Type: application
-      # Use a security group that allows incoming HTTP traffic
-      SecurityGroups:
-        - !Ref WebServerSecurityGroup
-      # Use a public subnet in at least two Availability Zones
-      Subnets:
-        - !Ref PublicSubnet1
-        - !Ref PublicSubnet2
-  # Create a target group for the web server instances
-  WebServerTargetGroup:
-    Type: AWS::ElasticLoadBalancingV2::TargetGroup
-    Properties
-Resources:
-  # (Continued from previous response)
-  WebServerTargetGroup:
-    Type: AWS::ElasticLoadBalancingV2::TargetGroup
-    Properties:
-      # Use a target type of instance to route traffic to the web server instances
-      TargetType: instance
-      # Use the same protocol and port as the listener on the load balancer
-      Protocol: HTTP
-      Port: 80
       # Use the same VPC as the web server instances
       VpcId: !Ref VPC
-      # Use the same health check configuration as the listener on the load balancer
-      HealthCheckProtocol: HTTP
-      HealthCheckPort: 80
-      HealthCheckPath: /health
-      HealthCheckIntervalSeconds: 30
-      HealthCheckTimeoutSeconds: 5
-      HealthyThresholdCount: 3
-      UnhealthyThresholdCount: 3
-  # Create a security group for the web server instances
+      # Allow incoming traffic from the web server instances
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 8000
+          ToPort: 8000
+          SourceSecurityGroupId: !Ref WebServerSecurityGroup
+      # Allow outgoing traffic to anywhere
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
+  # Modify the security group for the web server instances to allow outgoing traffic to the NoSQL database
   WebServerSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      # Use a VPC that allows public access
+      # (Modified from previous response)
+      # Use the same VPC as the web server instances
       VpcId: !Ref VPC
       # Allow incoming HTTP traffic from anywhere
       SecurityGroupIngress:
@@ -100,29 +63,9 @@ Resources:
           FromPort: 80
           ToPort: 80
           CidrIp: 0.0.0.0/0
-      # Allow outgoing traffic to anywhere
+      # Allow outgoing traffic to the NoSQL database
       SecurityGroupEgress:
-        - IpProtocol: -1
-          CidrIp: 0.0.0.0/0
-  # Create a public subnet in each Availability Zone
-  PublicSubnet1:
-    Type: AWS::EC2::Subnet
-    Properties:
-      VpcId: !Ref VPC
-      CidrBlock: 10.0.1.0/24
-      AvailabilityZone: us-east-1a
-      MapPublicIpOnLaunch: true
-  PublicSubnet2:
-    Type: AWS::EC2::Subnet
-    Properties:
-      VpcId: !Ref VPC
-      CidrBlock: 10.0.2.0/24
-      AvailabilityZone: us-east-1b
-      MapPublicIpOnLaunch: true
-  # Create a Virtual Private Cloud (VPC) for the web server instances
-  VPC:
-    Type: AWS::EC2::VPC
-    Properties:
-      CidrBlock: 10.0.0.0/16
-      EnableDnsSupport: true
-      EnableDnsHostnames: true
+        - IpProtocol: tcp
+          FromPort: 8000
+          ToPort: 8000
+          DestinationSecurityGroupId: !Ref TweetDatabaseSecurityGroup
