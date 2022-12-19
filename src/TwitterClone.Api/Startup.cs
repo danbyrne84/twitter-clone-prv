@@ -1,3 +1,4 @@
+using Amazon.DynamoDBv2;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -11,6 +12,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TwitterClone.Data;
+using TwitterClone.Data.Backends.DynamoDb;
+using TwitterClone.Services;
 
 namespace TwitterClone.Api
 {
@@ -26,6 +30,16 @@ namespace TwitterClone.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<AWSCredentials>(Configuration.GetSection("AWS"));
+            services.AddTransient<AmazonDynamoDBClient>();
+
+            services.AddTransient<ITweetDataAccess, TweetDataAccess>();
+            services.AddTransient<IUserDataAccess, UserDataAccess>();
+            services.AddTransient<IHashtagDataAccess, HashtagDataAccess>();
+
+            services.AddTransient<TweetService>();
+            services.AddTransient<UserService>();
+            services.AddTransient<HashtagService>();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
