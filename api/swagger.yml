@@ -1,0 +1,330 @@
+openapi: 3.0.2
+info:
+  version: 1.0.0
+  title: Twitter Clone API
+  description: An API for a Twitter clone, including user timelines, profiles, tweeting, follower and following lists, and hashtags.
+  contact:
+    name: John Doe
+    email: john.doe@example.com
+    url: https://twitter-clone.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+servers:
+  - url: https://twitter-clone.com/api
+paths:
+  /tweets:
+    get:
+      summary: Get the current user's timeline
+      parameters:
+        - name: max_tweets
+          in: query
+          description: The maximum number of tweets to retrieve
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successfully retrieved timeline
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tweet'
+    post:
+      summary: Create a new tweet
+      operationId: createTweet
+      tags:
+        - tweets
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - text
+              properties:
+                text:
+                  type: string
+                  description: The text of the tweet.
+                  example: "Just learned about OpenAPI and it's awesome!"
+      responses:
+        '201':
+          description: Tweet created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: The ID of the newly created tweet.
+                  text:
+                    type: string
+                    description: The text of the tweet.
+                  createdAt:
+                    type: string
+                    format: date-time
+                    description: The date and time the tweet was created.
+        '400':
+          description: Invalid request body
+  /tweets/{tweetId}:
+    get:
+      summary: Get a tweet by ID
+      operationId: getTweet
+      tags:
+        - tweets
+      parameters:
+        - name: tweetId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Tweet retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: The ID of the tweet.
+                  text:
+                    type: string
+                    description: The text of the tweet.
+                  createdAt:
+                    type: string
+                    format: date-time
+                    description: The date and time the tweet was created.
+        '404':
+          description: Tweet not found
+  /users/{userId}/tweets:
+    get:
+      summary: Get a user's tweets
+      operationId: getUserTweets
+      tags:
+        - users
+        - tweets
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Tweets retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      description: The ID of the tweet.
+                    text:
+                      type: string
+                      description: The text of the tweet.
+                    createdAt:
+                      type: string
+                      format: date-time
+                      description: The date and time the tweet was created.
+        '404':
+          description: User not found
+  /users/{userId}/followers:
+    get:
+      summary: Get a user's followers
+      operationId: getFollowers
+      tags:
+        - users
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Followers retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      description: The ID of the follower.
+                    username:
+                      type: string
+                      description: The username of the follower.
+                    name:
+                      type: string
+                      description: The name of the follower.
+                    profileImageUrl:
+                      type: string
+                      description: The URL of the follower's profile image.
+        '404':
+          description: User not found
+  /users/{userId}/following:
+    get:
+      summary: Get users that a user is following
+      operationId: getFollowing
+      tags:
+        - users
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Following users retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      description: The ID of the user being followed.
+                    username:
+                      type: string
+                      description: The username of the user being followed.
+                    name:
+                      type: string
+                      description: The name of the user being followed.
+                    profileImageUrl:
+                      type: string
+                      description: The URL of the user being followed's profile image.
+        '404':
+          description: User not found
+  /users/{userId}:
+    get:
+      summary: Get a user by ID
+      operationId: getUser
+      tags:
+        - users
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: User retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: The ID of the user.
+                  username:
+                    type: string
+                    description: The username of the user.
+                  name:
+                    type: string
+                    description: The name of the user.
+                  profileImageUrl:
+                    type: string
+                    description: The URL of the user's profile image.
+        '404':
+          description: User not found
+  /hashtags:
+    get:
+      summary: Get a list of popular hashtags
+      operationId: getHashtags
+      tags:
+        - hashtags
+      responses:
+        '200':
+          description: Hashtags retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  description: A hashtag.
+  /hashtags/{hashtag}:
+    get:
+      summary: Get tweets with a specific hashtag
+      operationId: getTweetsByHashtag
+      tags:
+        - hashtags
+        - tweets
+      parameters:
+        - name: hashtag
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Tweets retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      description: The ID of the tweet.
+                    text:
+                      type: string
+                      description: The text of the tweet.
+                    createdAt:
+                      type: string
+                      format: date-time
+                      description: The date and time the tweet was created.
+        '404':
+          description: Hashtag not found
+          
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The ID of the user.
+        username:
+          type: string
+          description: The username of the user.
+        name:
+          type: string
+          description: The name of the user.
+        profileImageUrl:
+          type: string
+          description: The URL of the user's profile image.
+    Tweet:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The ID of the tweet.
+        userid:
+          type: integer
+          description: The userid of the tweeter.
+        text:
+          type: string
+          description: The text of the tweet.
+        createdAt:
+          type: string
+          format: date-time
+          description: The date and time the tweet was created.
