@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\TwitterClone.Data\TwitterClone.Data.csproj" />
     <ProjectReference Include="..\TwitterClone.Models\TwitterClone.Models.csproj" />
   </ItemGroup>
 

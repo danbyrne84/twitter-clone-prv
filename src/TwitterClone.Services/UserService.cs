@@ -2,28 +2,34 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using TwitterClone.Data;
 using TwitterClone.Models;
 
 namespace TwitterClone.Services
 {
     public class UserService
     {
+        private readonly IUserDataAccess _userDataAccess;
+
+        public UserService(IUserDataAccess userDataAccess)
+        {
+            _userDataAccess = userDataAccess;
+        }
+
         public async Task<List<Tweet>> GetUserTweetsAsync(int userId)
         {
-            // retrieve and return a list of tweets for the user with the specified ID
-            throw new NotImplementedException();
+            return await _userDataAccess.GetUserTweetsAsync(userId);
         }
 
         public async Task<List<User>> GetFollowersAsync(int userId)
         {
-            // retrieve and return a list of users who are following the user with the specified ID
-            throw new NotImplementedException();
+            return await _userDataAccess.GetFollowersAsync(userId);
         }
 
         public async Task<List<User>> GetFollowingsAsync(int userId)
         {
-            // retrieve and return a list of users that the user with the specified ID is following
-            throw new NotImplementedException();
+            return await _userDataAccess.GetFollowingsAsync(userId);
         }
     }
+
 }
