@@ -4,4 +4,16 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.7.101.9" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TwitterClone.Models\TwitterClone.Models.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Backends\LocalDB\" />
+  </ItemGroup>
+
 </Project>
