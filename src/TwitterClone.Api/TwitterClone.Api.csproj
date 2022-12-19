@@ -15,7 +15,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
+    <ProjectReference Include="..\TwitterClone.Models\TwitterClone.Models.csproj" />
+    <ProjectReference Include="..\TwitterClone.Services\TwitterClone.Services.csproj" />
   </ItemGroup>
 
 </Project>
