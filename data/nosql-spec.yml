@@ -1,0 +1,78 @@
+NoSQL entities:
+- name: Users
+  description: A collection of users, with each user represented as a document.
+  documents:
+    - name: Id
+      type: Number
+      description: A unique identifier for the user.
+    - name: Username
+      type: String
+      description: The username of the user.
+    - name: Password
+      type: String
+      description: The password of the user, stored in hashed form for security.
+    - name: CreatedAt
+      type: String
+      description: The timestamp of when the user was created, in ISO 8601 format.
+- name: Tweets
+  description: A collection of tweets, with each tweet represented as a document.
+  documents:
+    - name: Id
+      type: Number
+      description: A unique identifier for the tweet.
+    - name: UserId
+      type: Number
+      description: The identifier of the user who made the tweet.
+    - name: Text
+      type: String
+      description: The text of the tweet.
+    - name: CreatedAt
+      type: String
+      description: The timestamp of when the tweet was created, in ISO 8601 format.
+- name: Followers
+  description: A collection of user follower relationships, with each relationship represented as a document.
+  documents:
+    - name: UserId
+      type: Number
+      description: The identifier of the user who is being followed.
+    - name: FollowerId
+      type: Number
+      description: The identifier of the user who is following.
+- name: Followings
+  description: A collection of user following relationships, with each relationship represented as a document.
+  documents:
+    - name: UserId
+      type: Number
+      description: The identifier of the user who is following.
+    - name: FollowingId
+      type: Number
+      description: The identifier of the user who is being followed.
+- name: Hashtags
+  description: A collection of hashtags, with each hashtag represented as a document.
+  documents:
+    - name: Tag
+      type: String
+      description: The name of the hashtag, with the '#' symbol removed.
+    - name: TweetIds
+      type: Array
+      description: A list of tweet IDs that use the hashtag.
+
+Indexes:
+- entity: Tweets
+  indexes:
+    - name: UserId
+      description: Allows for efficient retrieval of all tweets made by a particular user.
+    - name: CreatedAt
+      description: Allows for efficient retrieval of tweets in reverse chronological order.
+- entity: Followers
+  indexes:
+    - name: FollowerId
+      description: Allows for efficient retrieval of all users that a particular user is following.
+- entity: Followings
+  indexes:
+    - name: UserId
+      description: Allows for efficient retrieval of all users that are following a particular user.
+- entity: Hashtags
+  indexes:
+    - name: Tag
+      description: Allows for efficient retrieval of all tweets that use a particular hashtag.

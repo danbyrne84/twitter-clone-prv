@@ -30,6 +30,17 @@ Resources:
           ProvisionedThroughput:
             ReadCapacityUnits: 5
             WriteCapacityUnits: 5
+        - IndexName: hashtag_index
+          KeySchema:
+            - AttributeName: user_id
+              KeyType: HASH
+            - AttributeName: tweet_id
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 5
+            WriteCapacityUnits: 5
       # Use a provisioned capacity to handle the expected read and write requests
       ProvisionedThroughput:
         ReadCapacityUnits: 5
@@ -50,6 +61,27 @@ Resources:
       SecurityGroupEgress:
         - IpProtocol: -1
           CidrIp: 0.0.0.0/0
+  # Modify the security group for the web server instances to allow outgoing traffic to the NoSQL database
+  WebServerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      # (Modified from previous response)
+      # Use the same VPC as the web server instances
+      VpcId: !Ref VPC
+      # Allow incoming HTTP traffic from anywhere
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+      # Allow outgoing traffic to the NoSQL database
+      SecurityGroupEgress:
+        - IpProtocol: tcp
+
+          FromPort: 8000
+          ToPort: 8000
+          DestinationSecurityGroupId: !Ref TweetDatabaseSecurityGroup
+
   # Modify the security group for the web server instances to allow outgoing traffic to the NoSQL database
   WebServerSecurityGroup:
     Type: AWS::EC2::SecurityGroup
