@@ -1,1 +1,13 @@
-<p>timeline works!</p>
+<cdk-virtual-scroll-viewport
+class="timeline"
+(scrolledIndexChange)="onScroll()"
+[itemSize]="itemSize"
+[minBufferPx]="minBufferPx"
+[maxBufferPx]="maxBufferPx"
+>
+<p>Timeline (Newest->Oldest)</p>
+<div *cdkVirtualFor="let tweet of tweets" class="tweet">
+  Id: {{ tweet.tweetId }}, User: {{ tweet.userId }}
+  Tweet: {{ tweet.text }}
+</div>
+</cdk-virtual-scroll-viewport>

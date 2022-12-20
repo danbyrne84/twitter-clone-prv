@@ -1,0 +1,23 @@
+.timeline {
+    /* Set the height and width of the virtual scroll window */
+    height: 500px;
+    width: 500px;
+  
+    /* Set the background color of the virtual scroll window */
+    background-color: #ffffff;
+  
+    /* Add some padding to the virtual scroll window */
+    padding: 10px;
+  }
+  
+  .tweet {
+    /* Set the height and width of each tweet */
+    height: 50px;
+    width: 100%;
+  
+    /* Add some padding to each tweet */
+    padding: 10px;
+  
+    /* Add a border to each tweet */
+    border-bottom: 1px solid #cccccc;
+  }

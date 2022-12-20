@@ -5,23 +5,11 @@ import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 
 @Component({
   selector: 'app-timeline',
-  template: `
-    <cdk-virtual-scroll-viewport
-      class="timeline"
-      (scrolledIndexChange)="onScroll()"
-      [itemSize]="itemSize"
-      [minBufferPx]="minBufferPx"
-      [maxBufferPx]="maxBufferPx"
-    >
-      <div *cdkVirtualFor="let tweet of tweets" class="tweet">
-        {{ tweet.text }}
-      </div>
-    </cdk-virtual-scroll-viewport>
-  `,
+  templateUrl: './timeline.component.html',
   styleUrls: ['./timeline.component.scss']
 })
 export class TimelineComponent implements OnInit {
-  tweets: Tweet[] = [];
+  tweets: Tweet[] | undefined;
   loading = false;
   itemSize = 50;
   minBufferPx = 100;
@@ -34,11 +22,13 @@ export class TimelineComponent implements OnInit {
 
   ngOnInit() {
     this.refreshTimeline();
+    setInterval(this.onScroll, 5000);
   }
 
   async refreshTimeline() {
     this.loading = true;
-    this.tweets = await this.tweetService.getTimeline().toPromise() ?? [];
+    this.tweets = await this.tweetService.getTimeline().toPromise();
+    console.log('this tweets', this.tweets);
     this.loading = false;
   }
 
@@ -52,6 +42,7 @@ export class TimelineComponent implements OnInit {
     if (end === total) {
       this.loading = true;
       const newTweets = await this.tweetService.getTimeline().toPromise();
+      if(this.tweets == undefined) this.tweets = [];
       this.tweets.push(...newTweets ?? []);
       this.loading = false;
     }
