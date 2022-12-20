@@ -34,7 +34,7 @@ namespace TwitterClone.Api.Controllers
         {
             // Create a new tweet
             // Return newly created tweet as response
-            var tweetId = await tweetService.CreateTweetAsync(tweet.Text);
+            var tweetId = await tweetService.CreateTweetAsync(tweet.UserId, tweet.Text);
 
             // this will do a double hit to the DB, optimization: just return the ID
             return await tweetService.GetTweetAsync(tweetId);

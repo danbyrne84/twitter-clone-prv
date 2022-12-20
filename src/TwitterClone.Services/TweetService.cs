@@ -9,10 +9,12 @@ namespace TwitterClone.Services
     public class TweetService
     {
         private readonly ITweetDataAccess _tweetDataAccess;
+        private readonly IMemoryCacheService _memoryCacheService;
 
-        public TweetService(ITweetDataAccess tweetDataAccess)
+        public TweetService(ITweetDataAccess tweetDataAccess, IMemoryCacheService memoryCacheService)
         {
             _tweetDataAccess = tweetDataAccess;
+            this._memoryCacheService = memoryCacheService;
         }
 
         public async Task<List<Tweet>> GetTimelineAsync(int maxTweets)
@@ -21,13 +23,15 @@ namespace TwitterClone.Services
             return await _tweetDataAccess.GetTimelineAsync(maxTweets);
         }
 
-        public async Task<int> CreateTweetAsync(string text)
+        public async Task<long> CreateTweetAsync(long userId, string text)
         {
             // create a new tweet with the specified text and return the ID of the newly created tweet
-            return await _tweetDataAccess.CreateTweetAsync(text);
+            var newId = await _memoryCacheService.IncrementTweetCountAsync();
+
+            return await _tweetDataAccess.CreateTweetAsync(newId, userId, text);
         }
 
-        public async Task<Tweet> GetTweetAsync(int tweetId)
+        public async Task<Tweet> GetTweetAsync(long tweetId)
         {
             // retrieve and return a tweet with the specified ID
             return await _tweetDataAccess.GetTweetAsync(tweetId);

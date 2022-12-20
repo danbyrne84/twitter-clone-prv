@@ -8,6 +8,7 @@ using TwitterClone.Models;
 
 namespace TwitterClone.Data.Backends.DynamoDb
 {
+
     public class TweetDataAccess : ITweetDataAccess
     {
         private readonly AmazonDynamoDBClient _dynamoClient;
@@ -28,7 +29,9 @@ namespace TwitterClone.Data.Backends.DynamoDb
                 {
                     { ":userId", new AttributeValue { N = "123" } } // replace with the ID of the current user
                 },
-                Limit = maxTweets
+                    Limit = maxTweets,
+                    ScanIndexForward = false, // retrieve tweets in reverse chronological order
+                    IndexName = "CreatedAt-Index"
             };
 
             // execute the query
@@ -38,15 +41,14 @@ namespace TwitterClone.Data.Backends.DynamoDb
             return queryResponse.Items.Select(item => new Tweet
             {
                 Id = int.Parse(item["Id"].N),
+                UserId = int.Parse(item["UserId"].N),
                 Text = item["Text"].S,
                 CreatedAt = DateTime.Parse(item["CreatedAt"].S)
             }).ToList();
         }
 
-        public async Task<int> CreateTweetAsync(string text)
+        public async Task<long> CreateTweetAsync(long userId, long tweetId, string text)
         {
-            // generate a unique ID for the new tweet
-            var tweetId = Guid.NewGuid().ToString();
 
             // construct the PutItem request to create the new tweet in the DynamoDB table
             var putItemRequest = new PutItemRequest
@@ -54,8 +56,8 @@ namespace TwitterClone.Data.Backends.DynamoDb
                 TableName = "Tweets",
                 Item = new Dictionary<string, AttributeValue>
                 {
-                    { "Id", new AttributeValue { N = tweetId } },
-                    { "UserId", new AttributeValue { N = "123" } }, // replace with the ID of the current user
+                    { "Id", new AttributeValue { N = tweetId.ToString() } },
+                    { "UserId", new AttributeValue { N = userId.ToString() } }, // replace with the ID of the current user
                     { "Text", new AttributeValue { S = text } },
                     { "CreatedAt", new AttributeValue { S = DateTime.UtcNow.ToString("O") } }
                 }
@@ -65,10 +67,10 @@ namespace TwitterClone.Data.Backends.DynamoDb
             await _dynamoClient.PutItemAsync(putItemRequest);
 
             // return the ID of the newly created tweet
-            return int.Parse(tweetId);
+            return tweetId;
         }
 
-        public async Task<Tweet> GetTweetAsync(int tweetId)
+        public async Task<Tweet> GetTweetAsync(long tweetId)
         {
             // construct the GetItem request to retrieve the tweet from the DynamoDB table
             var getItemRequest = new GetItemRequest
@@ -87,6 +89,7 @@ namespace TwitterClone.Data.Backends.DynamoDb
             return new Tweet
             {
                 Id = int.Parse(getItemResponse.Item["Id"].N),
+                UserId = int.Parse(getItemResponse.Item["UserId"].N),
                 Text = getItemResponse.Item["Text"].S,
                 CreatedAt = DateTime.Parse(getItemResponse.Item["CreatedAt"].S)
             };

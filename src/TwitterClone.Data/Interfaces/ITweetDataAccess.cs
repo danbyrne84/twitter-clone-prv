@@ -7,8 +7,8 @@ namespace TwitterClone.Data
     public interface ITweetDataAccess
     {
         Task<List<Tweet>> GetTimelineAsync(int maxTweets);
-        Task<int> CreateTweetAsync(string text);
-        Task<Tweet> GetTweetAsync(int tweetId);
+        Task<long> CreateTweetAsync(long tweetId, long userId, string text);
+        Task<Tweet> GetTweetAsync(long tweetId);
     }
 
 }

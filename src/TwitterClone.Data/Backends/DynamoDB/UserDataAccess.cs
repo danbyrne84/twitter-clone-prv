@@ -23,11 +23,12 @@ namespace TwitterClone.Data.Backends.DynamoDb
             var request = new QueryRequest
             {
                 TableName = "Tweets",
+                IndexName = "UserId-Index",
                 KeyConditionExpression = "UserId = :userId",
                 ExpressionAttributeValues = new Dictionary<string, AttributeValue>
-                {
-                    { ":userId", new AttributeValue { N = userId.ToString() } }
-                }
+            {
+                { ":userId", new AttributeValue { N = userId.ToString() } }
+            }
             };
 
             var response = await _dynamoClient.QueryAsync(request);
@@ -48,11 +49,12 @@ namespace TwitterClone.Data.Backends.DynamoDb
             var request = new QueryRequest
             {
                 TableName = "Followers",
+                IndexName = "FollowerId-Index",
                 KeyConditionExpression = "UserId = :userId",
                 ExpressionAttributeValues = new Dictionary<string, AttributeValue>
-                {
-                    { ":userId", new AttributeValue { N = userId.ToString() } }
-                }
+            {
+                { ":userId", new AttributeValue { N = userId.ToString() } }
+            }
             };
 
             var response = await _dynamoClient.QueryAsync(request);
@@ -73,6 +75,7 @@ namespace TwitterClone.Data.Backends.DynamoDb
             var request = new QueryRequest
             {
                 TableName = "Followings",
+                IndexName = "UserId-Index",
                 KeyConditionExpression = "FollowerId = :followerId",
                 ExpressionAttributeValues = new Dictionary<string, AttributeValue>
                 {

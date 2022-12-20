@@ -56,7 +56,6 @@ NoSQL entities:
     - name: TweetIds
       type: Array
       description: A list of tweet IDs that use the hashtag.
-
 Indexes:
 - entity: Tweets
   indexes:
