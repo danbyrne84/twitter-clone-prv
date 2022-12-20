@@ -1,0 +1,23 @@
+# This workflow will build and push a web application to an Azure Static Web App when you change your code.
+#
+name: Deploy to Azure
+on:
+  push:
+    paths:
+      - src/Twitter.Web.Angular/Twitter.Web.Angular
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Deploy
+        uses: azure/static-web-apps-deploy@v1
+        with:
+          api-token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          app-name: my-static-web-app
+          location: West US
+          source-folder: src/Twitter.Web.Angular/Twitter.Web.Angular/dist/twitter.web.angular
