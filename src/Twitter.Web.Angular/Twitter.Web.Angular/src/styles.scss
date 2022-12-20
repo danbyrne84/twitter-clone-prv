@@ -5,3 +5,16 @@
     contain: strict;
     height: 100%;
   }
+
+  div.content {
+    max-width: unset !important;
+    margin: 0 auto 0 !important;
+  }
+
+  app-timeline {
+    width: 100%;
+
+    .timeline {
+        width: unset !important;
+    }
+  }
