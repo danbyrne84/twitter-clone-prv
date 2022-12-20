@@ -6,17 +6,21 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { TimelineComponent } from './timeline/timeline.component';
 import { HttpClientModule } from '@angular/common/http';
+import { TweetInputComponent } from './tweet-input/tweet-input.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
     AppComponent,
-    TimelineComponent
+    TimelineComponent,
+    TweetInputComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     ScrollingModule,
-    HttpClientModule
+    HttpClientModule,
+    FormsModule
   ],
   providers: [CdkVirtualScrollViewport],
   bootstrap: [AppComponent]

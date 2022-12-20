@@ -1,0 +1,12 @@
+<div class="tweet-input-container">
+    <textarea
+      [(ngModel)]="text"
+      (keyup.enter)="submitTweet()"
+      placeholder="What's happening?"
+    ></textarea>
+    <button (click)="submitTweet()">
+      <svg>
+        <!-- SVG arrow icon goes here -->
+      </svg>
+    </button>
+  </div>
