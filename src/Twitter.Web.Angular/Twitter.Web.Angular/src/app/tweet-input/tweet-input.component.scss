@@ -1,27 +1,27 @@
 .tweet-input-container {
-    display: flex;
-    align-items: center;
-  
-    textarea {
-      flex: 1;
-      padding: 10px;
-      font-size: 16px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-  
-    button {
-      padding: 10px;
-      background: white;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      cursor: pointer;
-  
-      svg {
-        width: 24px;
-        height: 24px;
-        fill: #ccc;
-      }
+  display: flex;
+  align-items: center;
+
+  textarea {
+    flex: 1;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+
+  button {
+    padding: 10px;
+    background: transparent;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: auto;  /* added this to align button to the right */
+
+    svg {
+      width: 24px;
+      height: 24px;
+      fill: #ccc;
     }
   }
-  
+}
