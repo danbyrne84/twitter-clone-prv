@@ -1,6 +1,7 @@
 import { Component, OnInit, Inject, Injectable } from '@angular/core';
 import { TweetService } from '../services/tweet.service';
 import { Tweet } from '../models/tweet';
+import { TimelineComponent } from '../timeline/timeline.component';
 
 @Injectable()
 @Component({

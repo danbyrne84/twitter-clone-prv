@@ -3,4 +3,5 @@ export interface Tweet {
     userId: string;
     text: string;
     createdAt: Date;
+    avatarUrl: string;
 }

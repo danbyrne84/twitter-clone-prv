@@ -1,23 +1,59 @@
 .timeline {
-    /* Set the height and width of the virtual scroll window */
-    height: 500px;
-    width: 500px;
-  
-    /* Set the background color of the virtual scroll window */
-    background-color: #ffffff;
-  
-    /* Add some padding to the virtual scroll window */
-    padding: 10px;
-  }
-  
-  .tweet {
-    /* Set the height and width of each tweet */
-    height: 50px;
-    width: 100%;
-  
-    /* Add some padding to each tweet */
-    padding: 10px;
-  
-    /* Add a border to each tweet */
-    border-bottom: 1px solid #cccccc;
-  }
+  /* Set the height and width of the virtual scroll window */
+  height: 500px;
+  width: 500px;
+
+  /* Set the background color of the virtual scroll window */
+  background-color: #ffffff;
+
+  /* Add some padding to the virtual scroll window */
+  padding: 10px;
+
+  /* Style the tweet list */
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.tweet {
+  /* Set the height and width of each tweet */
+  height: 50px;
+  width: 100%;
+
+  /* Add some padding to each tweet */
+  padding: 10px;
+
+  /* Add a border to each tweet */
+  border-bottom: 1px solid #cccccc;
+
+  /* Style the tweet content */
+  display: flex;
+  align-items: center;
+}
+
+.tweet img {
+  /* Style the avatar image */
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.tweet .tweet-content {
+  /* Style the tweet text and metadata */
+  display: flex;
+  flex-direction: column;
+}
+
+.tweet .tweet-content .tweet-text {
+  /* Style the tweet text */
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.tweet .tweet-content .tweet-metadata {
+  /* Style the tweet metadata */
+  font-size: 14px;
+  color: #8899a6;
+  margin-top: 5px;
+}
